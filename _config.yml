@@ -23,10 +23,10 @@ avatar: http://7xkw0v.com1.z0.glb.clouddn.com/shenle.jpeg
 favicon: http://7xkw0v.com1.z0.glb.clouddn.com/shenle.jpeg
 
 # google analytics 设置
-ga:
-  id: UA-54767140-1
-  url: yansu.org
+#ga:
+#  id: UA-54767140-1
+#  url: yansu.org
 
 # disqus 设置
-disqus:
-  shortname: suyan-zh
+#disqus:
+#  shortname: suyan-zh
