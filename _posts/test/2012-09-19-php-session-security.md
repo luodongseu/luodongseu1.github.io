@@ -1,8 +1,8 @@
 ---
 layout: post
 title: PHP操作Session的原理及提升安全性时的一个问题
-category: 技术
-tags: PHP
+category: 测试
+tags: 测试
 description: PHP操作Session的原理及提升安全性时的一个问题
 ---
 
