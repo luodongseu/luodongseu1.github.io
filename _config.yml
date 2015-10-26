@@ -7,21 +7,20 @@ kramdown:
 
 # 作者信息
 author: 
-  name: 闫肃
-  email: suyan0830@gmail.com
-  link: http://yansu.org
-  weibo: http://weibo.com/yansu0711
-  github: http://github.com/suyan
+  name: smalinuxer
+  email: smalinuxer@gmail.com
+  link: http://smalinuxer.github.io
+  github: http://github.com/smalinuxer
 
 # 站点信息
-title: 闫肃的博客 
-description: 闫肃的博客
-url: http://yansu.org
+title: 202室
+description: smalinuxer的202室
+url: http://smalinuxer.github.io
 rss_url: /pages/atom.xml
 
 # avatar头像及Favicon
-avatar: http://7u2ho6.com1.z0.glb.clouddn.com/site-avatar.png
-favicon: http://7u2ho6.com1.z0.glb.clouddn.com/site-favicon.ico
+avatar: http://7xkw0v.com1.z0.glb.clouddn.com/shenle.jpeg
+favicon: http://7xkw0v.com1.z0.glb.clouddn.com/shenle.jpeg
 
 # google analytics 设置
 ga:
