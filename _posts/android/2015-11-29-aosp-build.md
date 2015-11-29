@@ -19,6 +19,7 @@ android6.0发布了,删除了n年之前编译的2.3.5_r1的镜像,打算编译4.
 ### 0x021.环境准备
 
 环境准备:
+
 > * **ubuntu** 10.04以上,笔者用14.04.3 kylin lts,原因只是因为kylin挺美的,当然其他的发行版也可以,只不过又要替换system lib,又要换取
 > * **虚拟机(可选)** ,笔者是mac 15inch低配(i7 16g 256ssd),装了vmware fu8,这个一堆坑,子标题细说.
 > * **jdk** , oracle jdk 6 ,注意一定不能用Openjdk,落坑了
@@ -30,6 +31,7 @@ android6.0发布了,删除了n年之前编译的2.3.5_r1的镜像,打算编译4.
 ubuntu请在官方源站下载.别随便百度一个阉割版.
 
 ubuntu虚拟机基本硬件设置
+
 > * 2核 4g 配置不能太低,太低编译慢,很容易出问题
 > * 硬盘最少40g+,下载+编译35g
 > * 硬盘最好挂载在同一个分区,不是一个分区挺麻烦
@@ -149,44 +151,45 @@ ubuntu虚拟机基本硬件设置
 
 这里介绍一下清华大学镜像站下载aosp方法
 
-#### step1
+**step1**
 
 下载修改好的[repo](http://pan.baidu.com/s/1kTwDyPh)
 
-#### step2
+**step2**
 
 	mkdir ~/bin
 	PATH=~/bin:$PATH
 
-#### step3
+**step3**
 
 将repo 拷贝到~/bin下面
 
-#### step4
+**step4**
 	
 建立android源码存放的路径,比如我就建立在
 
 	mkdir ~/android-source
 	cd ~/android-source
 	
-#### step5
+**step5**
 
 初始化git的用户信息,因为repo需要验证git
 
 	git config --global user.name "example name"
 	git config --global user.email "mail@example.com"
 	
-#### step6
+**step6**
 
 同步repo信息
 
 注意两点
+
 > * 这条命令请保证在android-source路径执行
 > * 可以自行选择android版本,版本选择请详见[android各个版本](https://source.android.com/source/build-numbers.html#source-code-tags-and-builds),选择了版本然后替换进下面命令
 
 	repo init -u git://aosp.tuna.tsinghua.edu.cn/android/platform/manifest -b android-4.0.3_r1
 
-#### step7
+**step7**
 
 同步repo
 
@@ -197,7 +200,7 @@ ubuntu虚拟机基本硬件设置
 4为并发数,清华大学的repo最大支持4并发,而且如果是单核也没有必要j4,指定j2,这个python的多进程有关.
 
 
-#### step8
+**step8**
 
 嘟嘟嘟,过了几个小时repo就被同步了下来.4.0.3的大概12g+,我花了2~3小时同步了下来.
 
