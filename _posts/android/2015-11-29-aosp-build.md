@@ -112,7 +112,7 @@ ubuntu虚拟机基本硬件设置
 
 	sudo apt-get install libgl1-mesa-dev
 
-然后装libgl1-mesa-glx:i386
+然后装libgl1-mesa-glx:i386(![Android, setting up a Linux build environment, libgl1-mesa-glx:i386 package have unmet dependencies](http://stackoverflow.com/questions/23254439/android-setting-up-a-linux-build-environment-libgl1-mesa-glxi386-package-have))
 
 	sudo apt-get install libgl1-mesa-dri-lts-trusty:i386 libgl1-mesa-glx-lts-trusty:i386 \
 	libc6:i386
