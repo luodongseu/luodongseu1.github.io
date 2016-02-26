@@ -29,8 +29,6 @@ keywords: h1n1,funny,game,kill
 
 ![1-4](http://7xkw0v.com1.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-02-25%20%E4%B8%8B%E5%8D%8810.26.36.png)
 
-![1-5](http://7xkw0v.com1.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-02-25%20%E4%B8%8B%E5%8D%8810.26.36.png)
-
 ## 第二次杀mom
 
 然后妈妈复活了,就和他们又遇一块了,然后他们就一直交流.后来他们这个mom有**种族歧视**就想着再杀她一次
@@ -70,6 +68,8 @@ keywords: h1n1,funny,game,kill
 
 ![4-1](http://7xkw0v.com1.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-02-25%20%E4%B8%8B%E5%8D%8810.33.53.png)
 
+其实这里他们也没想到又遇到了妈妈
+
 ![4-2](http://7xkw0v.com1.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-02-25%20%E4%B8%8B%E5%8D%8810.34.14.png)
 
 ![4-3](http://7xkw0v.com1.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-02-25%20%E4%B8%8B%E5%8D%8810.34.34.png)
@@ -99,6 +99,8 @@ keywords: h1n1,funny,game,kill
 ![4-15](http://7xkw0v.com1.z0.glb.clouddn.com/0970B5AD-29BE-4964-9E3C-F54C3DEB76D2.png)
 ![4-16](http://7xkw0v.com1.z0.glb.clouddn.com/535D308A-57A1-4686-B8F3-60B1F8FC5D42.png)
 ![4-17](http://7xkw0v.com1.z0.glb.clouddn.com/461798DA-5F36-41DA-9425-C597557E80CD.png)
+
+这时候,一开始不愿出来的妈妈被他们引出来了(妈妈以为他们走远了)
 
 ![4-18](http://7xkw0v.com1.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-02-25%20%E4%B8%8B%E5%8D%8810.40.47.png)
 
