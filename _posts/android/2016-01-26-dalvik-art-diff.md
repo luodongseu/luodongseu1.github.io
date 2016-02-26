@@ -73,4 +73,4 @@ art的解决:在art中,它将java分了一块空间命名为**Large-Object-Space
 根官方统计，art的内存利用率提高10倍了左右
 
 
-    参考链接:[ART and Dalvik](http://source.android.com/devices/tech/dalvik/index.htmll)
+参考链接:[ART and Dalvik](http://source.android.com/devices/tech/dalvik/index.htmll)
