@@ -49,8 +49,9 @@ keywords: android,smali,hijack
 
 果然出现了
 
-**com/sogou/upd/webserver/SougouIME**
-```CPP
+**com/sogou/upd/webserver/WebServerController**
+
+```
 
     # 创建一个0xf大小的数组并且放于寄存器v0
     new-array v0, v0, [Ljava/lang/String;
@@ -151,3 +152,36 @@ keywords: android,smali,hijack
     # 数组名叫 TARGET_EXPLOER_PACKAGENAME,其初始化完毕
 
 ```
+
+分析类WebServerController
+
+1.单例:
+
+```
+
+.method public static getInstance(Landroid/content/Context;)Lcom/sogou/upd/webserver/WebServerController;
+    .locals 1
+
+    .prologue
+    .line 18
+    sget-object v0, Lcom/sogou/upd/webserver/WebServerController;->mController:Lcom/sogou/upd/webserver/WebServerController;
+
+    if-nez v0, :cond_0
+
+    .line 19
+    new-instance v0, Lcom/sogou/upd/webserver/WebServerController;
+
+    invoke-direct {v0, p0}, Lcom/sogou/upd/webserver/WebServerController;-><init>(Landroid/content/Context;)V
+
+    sput-object v0, Lcom/sogou/upd/webserver/WebServerController;->mController:Lcom/sogou/upd/webserver/WebServerController;
+
+    .line 21
+    :cond_0
+    sget-object v0, Lcom/sogou/upd/webserver/WebServerController;->mController:Lcom/sogou/upd/webserver/WebServerController;
+
+    return-object v0
+.end method
+
+```
+
+2.
