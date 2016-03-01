@@ -9,6 +9,8 @@ keywords: android,smali,语法
 
 # 0x01.介绍
 
+笔者接下来所要介绍的调试方法也是我最早学习的调试方法，并且这种方法就像长生剑一样，简单并一直都有很好的效果。这种方法就是Smali Instrumentation，又称Smali 插桩。使用这种方法最大的好处就是不需要对手机进行root，不需要指定android的版本，如果结合一些tricks的话还会有意想不到的效果。
+    
 # 0x02.插桩过程
 
 ## 0x021.插桩类封装
@@ -110,10 +112,8 @@ keywords: android,smali,语法
 .super Landroid/app/Activity;
 .source "MainActivity.java"
 
-
 # static fields
 .field private static final str:Ljava/lang/String; = "Hello"
-
 
 # direct methods
 .method public constructor <init>()V
@@ -200,14 +200,42 @@ keywords: android,smali,语法
     
 可以看到,我在其内插入了三行封装类L的调用
 
-# 0x023.smali重打包&再签名
+## 0x023.smali重打包&再签名
+
+
+对smali再打包成dex并且打包成apk
+
+    apktool.sh b <dir>
+
+例如
+
+    apktool.sh b ASmali-log
+
+执行完之后在目录下build和dist文件夹,build文件夹下面为解压的apk文件.dist下面为已经打过包的apk文件
+
+但是此时的apk文件虽然打包打完了,但是没有再签名.是安装不上的,所以我们需要用到jarsigner工具,它在java自带的工具中有
+
+    jarsigner -verbose -keystore <keystore> -signedjar <signed_apk_name> <apk_name> <alias>
+
+例如:
+
+    jarsigner -verbose -keystore /Users/smalinuxer/Desktop/smalinuxer.jks -signedjar ASmali-signed.apk ASmali-log.apk smalinuxer
+
+之后就有了重新签名后的可以安装的apk了
+
+
+## 0x024.监听log
+    
+插桩了之后只需要监听到我们插的log即可,我们的tag是smali_in
+
+    adb logcat | grep smali_in
+
+出现相关的log,则说明插桩成功了
 
 
 
+如下图
 
-
-
-
-
+![1](http://7xkw0v.com1.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-02-29%20%E4%B8%8B%E5%8D%8812.18.17.png)
 
 

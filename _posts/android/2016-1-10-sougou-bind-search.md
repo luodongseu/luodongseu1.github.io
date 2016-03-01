@@ -184,4 +184,258 @@ keywords: android,smali,hijack
 
 ```
 
-2.
+2.方法
+
+```
+
+.method public stopServer()V
+.method public startServer()V
+
+.method public setPackageName(Ljava/lang/String;)V
+.method public getPackageName()Ljava/lang/String;
+
+.method public static checkTargetPackage(Ljava/lang/String;)Z
+
+.....
+
+```
+
+分析一下在startServer方法:
+
+其内跑了一个Thread,对应的run方法为:
+
+```
+
+# virtual methods
+.method public run()V
+    .locals 3
+
+    .prologue
+    .line 45
+    iget-object v0, p0, Lcom/sogou/upd/webserver/WebServerController$1;->this$0:Lcom/sogou/upd/webserver/WebServerController;
+
+    new-instance v1, Lcom/sogou/upd/webserver/WebServer;
+
+    iget-object v2, p0, Lcom/sogou/upd/webserver/WebServerController$1;->this$0:Lcom/sogou/upd/webserver/WebServerController;
+
+    # getter for: Lcom/sogou/upd/webserver/WebServerController;->mContext:Landroid/content/Context;
+    invoke-static {v2}, Lcom/sogou/upd/webserver/WebServerController;->access$100(Lcom/sogou/upd/webserver/WebServerController;)Landroid/content/Context;
+
+    move-result-object v2
+
+    invoke-direct {v1, v2}, Lcom/sogou/upd/webserver/WebServer;-><init>(Landroid/content/Context;)V
+
+    # setter for: Lcom/sogou/upd/webserver/WebServerController;->mServer:Lcom/sogou/upd/webserver/WebServer;
+    invoke-static {v0, v1}, Lcom/sogou/upd/webserver/WebServerController;->access$002(Lcom/sogou/upd/webserver/WebServerController;Lcom/sogou/upd/webserver/WebServer;)Lcom/sogou/upd/webserver/WebServer;
+
+    .line 46
+    iget-object v0, p0, Lcom/sogou/upd/webserver/WebServerController$1;->this$0:Lcom/sogou/upd/webserver/WebServerController;
+
+    # getter for: Lcom/sogou/upd/webserver/WebServerController;->mServer:Lcom/sogou/upd/webserver/WebServer;
+    invoke-static {v0}, Lcom/sogou/upd/webserver/WebServerController;->access$000(Lcom/sogou/upd/webserver/WebServerController;)Lcom/sogou/upd/webserver/WebServer;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Lcom/sogou/upd/webserver/WebServer;->startServer()V
+
+    .line 47
+    return-void
+.end method
+
+```
+
+分析一下WebServer,看了smali源码之后我也是醉了
+
+其内的代码和[How to start an android web server service?](http://stackoverflow.com/questions/11763475/how-to-start-an-android-web-server-service) 这里的代码一致,连变量名都不改
+
+就是开了一个后台的Server
+
+这时候要是有**插桩**就好了,但是可惜的是有保护.搜狗的保护和别的壳有点不太一样,我一插桩他就提示不是正版,之后退出
+
+这个暂且不分析,我们先分析其劫持的部分.这个的左右我估计可能是跑一个设置页还是啥,我看webhandle里面没有什么特别的内容(后门),当然也可能是用来确认当前上层的app是哪个,因为在android5.0以上废除了查询app栈的api,所以其有可能是用来判断当然在哪个app上
+
+3.SogouIME
+
+需要实现是一个输入法,需要一个主IME来做主界面键盘等
+
+查找mainfest可以看到com/sohu/inputmethod/sogou/SogouIME.smali 为搜狗输入法的主IME
+
+寻找到他相关劫持代码
+
+
+---
+
+在这一步之前其获取了相关的包名并且存入了WebServerController实例之中,
+
+
+---
+
+
+这里调用WebServerController的getPackageName,并调用checkTargtpackage对其检查是否是指定浏览器
+
+
+如果是指定浏览器将会对其直接进行intent
+
+
+.method public a(Ljava/lang/String;Z)V
+    .locals 6
+
+    .prologue
+    const/4 v0, 0x0
+
+    .line 24509
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->i()V
+
+    .line 24510
+    invoke-virtual {p0, v0}, Lcom/sohu/inputmethod/sogou/SogouIME;->requestHideSelf(I)V
+
+    .line 24512
+    :try_start_0
+    invoke-static {}, Lcom/sohu/util/SystemPropertiesReflect;->getSdkVersion()I
+
+    move-result v1
+
+    const/16 v2, 0xe
+
+    if-ge v1, v2, :cond_0
+
+    move p2, v0
+
+    .line 24514
+    :cond_0
+    if-eqz p2, :cond_2
+
+    .line 24515
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    const/4 v1, 0x1
+
+    invoke-static {v0, p1, v1}, Lsogou/mobile/explorer/hotwords/entrance/HotwordsController;->openHotwordsViewFromStartUrl(Landroid/content/Context;Ljava/lang/String;Z)V
+
+    .line 24540
+    :cond_1
+    :goto_0
+    return-void
+
+    .line 24517
+    :cond_2
+    invoke-static {p1}, Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;
+
+    move-result-object v1
+
+    .line 24518
+    new-instance v2, Landroid/content/Intent;
+
+    const-string v3, "android.intent.action.VIEW"
+
+    invoke-direct {v2, v3, v1}, Landroid/content/Intent;-><init>(Ljava/lang/String;Landroid/net/Uri;)V
+
+    .line 24519
+    const/high16 v1, 0x10000000
+
+    invoke-virtual {v2, v1}, Landroid/content/Intent;->setFlags(I)Landroid/content/Intent;
+
+    .line 24520
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v1
+
+    invoke-virtual {v1}, Landroid/content/Context;->getPackageManager()Landroid/content/pm/PackageManager;
+
+    move-result-object v1
+
+    const/4 v3, 0x0
+
+    invoke-virtual {v1, v2, v3}, Landroid/content/pm/PackageManager;->queryIntentActivities(Landroid/content/Intent;I)Ljava/util/List;
+
+    move-result-object v3
+
+    .line 24522
+    if-eqz v3, :cond_1
+
+    invoke-interface {v3}, Ljava/util/List;->size()I
+
+    move-result v1
+
+    if-lez v1, :cond_1
+
+    .line 24523
+    invoke-interface {v3}, Ljava/util/List;->size()I
+
+    move-result v4
+
+    move v1, v0
+
+    .line 24524
+    :goto_1
+    if-ge v1, v4, :cond_3
+
+    .line 24525
+    invoke-interface {v3, v1}, Ljava/util/List;->get(I)Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Landroid/content/pm/ResolveInfo;
+
+    iget-object v0, v0, Landroid/content/pm/ResolveInfo;->activityInfo:Landroid/content/pm/ActivityInfo;
+
+    iget-object v0, v0, Landroid/content/pm/ActivityInfo;->packageName:Ljava/lang/String;
+
+    .line 24526
+    sget-object v5, Lcom/sohu/inputmethod/sogou/SogouIME;->f:Ljava/lang/String;
+
+    invoke-virtual {v0, v5}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v5
+
+    if-eqz v5, :cond_4
+
+    .line 24527
+    invoke-virtual {v2, v0}, Landroid/content/Intent;->setPackage(Ljava/lang/String;)Landroid/content/Intent;
+
+    .line 24528
+    sget-object v0, Lcom/sohu/inputmethod/sogou/SogouIME;->f:Ljava/lang/String;
+
+    const-string v1, "sogou.mobile.explorer"
+
+    invoke-virtual {v0, v1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_3
+
+    .line 24529
+    const-string v0, "sogou.mobile.explorer.stay_browser"
+
+    const/4 v1, 0x1
+
+    invoke-virtual {v2, v0, v1}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
+
+    .line 24533
+    :cond_3
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-virtual {v0, v2}, Landroid/content/Context;->startActivity(Landroid/content/Intent;)V
+    :try_end_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+
+    goto :goto_0
+
+    .line 24537
+    :catch_0
+    move-exception v0
+
+    goto :goto_0
+
+    .line 24524
+    :cond_4
+    add-int/lit8 v0, v1, 0x1
+
+    move v1, v0
+
+    goto :goto_1
+.end method
