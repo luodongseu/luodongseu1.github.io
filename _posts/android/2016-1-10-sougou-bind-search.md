@@ -37,6 +37,11 @@ keywords: android,smali,hijack
 
 ![5](http://7xkw0v.com1.z0.glb.clouddn.com/Screenshot_2015-12-22-14-10-10.png)
 
+**现象三**
+
+在登陆注册的输入框将不出现劫持
+
+
 # 0x03.分析
 
 ## 0x031.劫持的浏览器列表
@@ -260,21 +265,137 @@ keywords: android,smali,hijack
 
 查找mainfest可以看到com/sohu/inputmethod/sogou/SogouIME.smali 为搜狗输入法的主IME
 
-寻找到他相关劫持代码
+寻找到他相关劫持代码,在SogouIME.smali中的一个方法中果然出现了更新WebServerController状态的代码
+
+```
+
+.method public c(Ljava/lang/String;)V
+    .locals 1
+
+    .prologue
+    .line 12338
+    sget-object v0, Lcom/sohu/inputmethod/sogou/SogouAppApplication;->mAppContxet:Landroid/content/Context;
+
+    invoke-static {v0, p1}, Lsogou/mobile/explorer/hotwords/entrance/HotwordsController;->notifyPackageName(Landroid/content/Context;Ljava/lang/String;)V
+
+    .line 12339
+    invoke-static {p1}, Lcom/sogou/androidtool/sdk/notification/appfrequency/AppFrequencyHelper;->recordAppUse(Ljava/lang/String;)V
+
+    .line 12340
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/sogou/upd/webserver/WebServerController;->getInstance(Landroid/content/Context;)Lcom/sogou/upd/webserver/WebServerController;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Lcom/sogou/upd/webserver/WebServerController;->getPackageName()Ljava/lang/String;
+
+    move-result-object v0
+
+    .line 12341
+    if-eqz p1, :cond_0
+
+    invoke-virtual {p1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-nez v0, :cond_0
+
+    .line 12342
+    sget-boolean v0, Lcom/sogou/upd/webserver/WebServer;->RUNNING:Z
+
+    if-nez v0, :cond_1
+
+    invoke-static {p1}, Lcom/sogou/upd/webserver/WebServerController;->checkTargetPackage(Ljava/lang/String;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/sohu/inputmethod/settings/SettingManager;->getInstance(Landroid/content/Context;)Lcom/sohu/inputmethod/settings/SettingManager;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Lcom/sohu/inputmethod/settings/SettingManager;->bh()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    .line 12344
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/sogou/upd/webserver/WebServerController;->getInstance(Landroid/content/Context;)Lcom/sogou/upd/webserver/WebServerController;
+
+    move-result-object v0
+
+    invoke-virtual {v0, p1}, Lcom/sogou/upd/webserver/WebServerController;->setPackageName(Ljava/lang/String;)V
+
+    .line 12345
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/sogou/upd/webserver/WebServerController;->getInstance(Landroid/content/Context;)Lcom/sogou/upd/webserver/WebServerController;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Lcom/sogou/upd/webserver/WebServerController;->startServer()V
+
+    .line 12351
+    :cond_0
+    :goto_0
+    return-void
+
+    .line 12346
+    :cond_1
+    sget-boolean v0, Lcom/sogou/upd/webserver/WebServer;->RUNNING:Z
+
+    if-eqz v0, :cond_0
+
+    .line 12347
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/sogou/upd/webserver/WebServerController;->getInstance(Landroid/content/Context;)Lcom/sogou/upd/webserver/WebServerController;
+
+    move-result-object v0
+
+    invoke-virtual {v0, p1}, Lcom/sogou/upd/webserver/WebServerController;->setPackageName(Ljava/lang/String;)V
+
+    .line 12348
+    invoke-virtual {p0}, Lcom/sohu/inputmethod/sogou/SogouIME;->getApplicationContext()Landroid/content/Context;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/sogou/upd/webserver/WebServerController;->getInstance(Landroid/content/Context;)Lcom/sogou/upd/webserver/WebServerController;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Lcom/sogou/upd/webserver/WebServerController;->stopServer()V
+
+    goto :goto_0
+.end method
+
+```
 
 
----
-
-在这一步之前其获取了相关的包名并且存入了WebServerController实例之中,
-
-
----
-
-
-这里调用WebServerController的getPackageName,并调用checkTargtpackage对其检查是否是指定浏览器
+在这一步之前其获取了相关的包名并且存入了WebServerController实例之中,这里调用WebServerController的getPackageName,并调用checkTargtpackage对其检查是否是指定浏览器
 
 
 如果是指定浏览器将会对其直接进行intent
+
+
+```
 
 
 .method public a(Ljava/lang/String;Z)V
@@ -311,7 +432,9 @@ keywords: android,smali,hijack
     move-result-object v0
 
     const/4 v1, 0x1
-
+	
+	# 注意这里,实际上实在这里面处理具体跳转
+	
     invoke-static {v0, p1, v1}, Lsogou/mobile/explorer/hotwords/entrance/HotwordsController;->openHotwordsViewFromStartUrl(Landroid/content/Context;Ljava/lang/String;Z)V
 
     .line 24540
@@ -439,3 +562,29 @@ keywords: android,smali,hijack
 
     goto :goto_1
 .end method
+
+```
+
+## 0X032. 实际监听逻辑
+
+当我们分析出他是如何监听并且跳转的之后,还有一个小问题,就是劫持出现的逻辑
+
+因为在现象三的情况下他是不出现劫持的.这也和用户体验有关.比如你在进行输入用户名密码的时候,它进行劫持肯定是用户体验不好的.
+
+其实这个问题很简单,**其出现劫持的时机为:通过对android软件EditorInfo.IME_ACTION_SEARCH方式的劫持**
+
+这可以根据每次弹出来的键盘进行验证
+
+
+# 0x04.总结
+
+
+
+结论:非前端劫持,通过对android软件EditorInfo.IME_ACTION_SEARCH方式的劫持,并判断当前是否为指定的浏览器,是则跳转相应搜狗搜索,否则则直接不做处理
+
+画成流程图
+
+![p](http://7xkw0v.com1.z0.glb.clouddn.com/p.png)
+
+
+
