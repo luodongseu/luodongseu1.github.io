@@ -1,6 +1,6 @@
 ### 我的博客
 
-地址：[http://smalinxuer.github.io](http://smalinxuer.github.io)
+地址：[http://smalinuxer.github.io](http://smalinuxer.github.io)
 
 ### 安装说明
 
