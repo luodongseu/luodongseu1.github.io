@@ -6,13 +6,6 @@ keywords: ml,dl,data
 ---
 
 
-
-
-
-# TensorFlow入门与实例
-
-------
-
 ## 1. 前言
 
 虽然标题写的是TensorFlow入门与实践，但是完成了这个实例之后感觉一般化的deeplearning问题基本都是可以解决的。TensorFlow在神经网络方面，提供了非常完整的工具化支持，其中包括：
@@ -175,6 +168,64 @@ e为误差，e=t-a ， t为期望输出，a为实际输出
 如图过程，将滑窗经过区域的最大值提取出来成为新的输出。2x2的滑窗，每次滑两步
 我觉得这也是一种特殊卷积过程。
 
+### 2.6 损失函数与正规化函数
+
+
+对于一个监督学习模型来说，过小的特征集合使得模型过于简单，过大的特征集合使得模型过于复杂。
+
+> * 对于特征集过小的情况，称之为欠拟合（underfitting）
+> *　对于特征集过大的情况，称之为过拟合（overfitting）
+
+而对于过拟合问题，是可以用正规化或者损失函数来解决的
+
+为了防止overfitting，可以用的方法有很多。有一个概念需要先说明，在机器学习算法中，我们常常将原始数据集分为三部分：training data、validation data、testing data。
+
+这个validation data是什么？它其实就是用来避免过拟合的，在训练过程中，我们通常用它来确定一些超参数（比如根据validation data上的accuracy来确定early stopping的epoch大小、根据validation data确定learning rate等等）。
+
+那为啥不直接在testing data上做这些呢？因为如果在testing data做这些，那么随着训练的进行，我们的网络实际上就是在一点一点地overfitting我们的testing data，导致最后得到的testing accuracy没有任何参考意义。
+
+因此，training data的作用是计算梯度更新权重，validation data如上所述，testing data则给出一个accuracy以判断网络的好坏
+
+
+损失函数用来计算当前模型的损失值，损失值越大，表示模型越不稳定
+
+其公式为：
+
+![0999](http://7xkw0v.com1.z0.glb.clouddn.com/i24.PNG)
+
+
+而正规化函数
+
+![21321343](http://7xkw0v.com1.z0.glb.clouddn.com/i25.PNG)
+
+
+实际上简单理解可以将正规化比作一个BP过程，用L1或者L2函数来更新权重达到一个损失最小值。
+
+### 2.7 Dropout
+
+同样的，我们能用随机丢失一些神经元达到更好地效果值，丢失了一些神经元同样可以达到
+
+理由如下
+
+> * 由于每次用输入网络的样本进行权值更新时，隐含节点都是以一定概率随机出现，因此不能保证每2个隐含节点每次都同时出现，这样权值的更新不再依赖于有固定关系隐含节点的共同作用，阻止了某些特征仅仅在其它特定特征下才有效果的情况。
+> * 可以将dropout看作是模型平均的一种。对于每次输入到网络中的样本（可能是一个样本，也可能是一个batch的样本），其对应的网络结构都是不同的，但所有的这些不同的网络结构又同时share隐含节点的权值。这样不同的样本就对应不同的模型，是bagging的一种极端情况。个人感觉这个解释稍微靠谱些，和bagging，boosting理论有点像，但又不完全相同。
+> * native bayes是dropout的一个特例。Native bayes有个错误的前提，即假设各个特征之间相互独立，这样在训练样本比较少的情况下，单独对每个特征进行学习，测试时将所有的特征都相乘，且在实际应用时效果还不错。而Droput每次不是训练一个特征，而是一部分隐含层特征。
+> * 还有一个比较有意思的解释是，Dropout类似于性别在生物进化中的角色，物种为了使适应不断变化的环境，性别的出现有效的阻止了过拟合，即避免环境改变时物种可能面临的灭亡。
+
+
+### 2.8 Update Function 
+
+这个没什么好说的就是BP过程
+
+
+### 2.9 学习效率衰减
+
+这个实际上是一个很土的方法，说实话我不是很理解。我的理解是在工程的角度来减少一些loss。
+
+举个例子：假如我们有个模型，模型数据中有N个训练集合，我们定义了M个Step去学习（M << N） , 那么我们做学习效率衰减就是，在第J步的时候我们随机的丢掉f(J,M）个集合，而且随着loss率越小，我门Dropout的越多。
+
+这样实际到了接近预期的值时，每一step就越准确，而且偏差就越来越小。就不会出现从90%突然调到50%的情况了。
+
 
 
 ## 3. 数据准备与预处理
@@ -244,9 +295,82 @@ def normalize(samples):
 
 ## 4.计算
 
+### 4.1 TensorFlow简单运算与概念
 
 
-### 4.1 定义多层神经网络
+
+> * 标量表示值
+> * 矢量表示位置 ， 可以用一维数组表示
+> * 张量表示整个空间 ， 可以用多维数组，矩阵
+
+
+
+数据类型及过程
+
+
+> * 计算图谱 ： 过程+数据
+> * @Varibale 变量维护图执行过程中的状态信息.
+> * @Tensor TensorFlow 程序使用 tensor 数据结构来代表所有的数据, 计算图中, 操作间传递的数据都是 tensor. 你可以把 TensorFlow tensor 看作是一个 n 维的数组或列表. 一个 tensor 包含一个静态类型 rank, 和 一个 shape.
+> * @Graph 一个计算图谱
+> * @Session 用来计算一个计算图谱,简单来说是个runtime
+
+
+
+在TensorFlow中，任何计算都是会产生Tensor 对象
+
+
+简单例子：
+
+
+```python 
+
+import tensorflow as tf
+
+v1 = tf.Variable(10) # 变量
+v2 = tf.Variable(5)
+v3 = tf.constant(5) # 返回一个tensor
+
+addv = v1 + v2 # 实际上Variable（或constant）在运算时，会产生Tensor.而Tensor计算是需要session runtime支持的
+v1,v2,addv
+
+```
+
+结果 ：
+
+```python
+
+(<tensorflow.python.ops.variables.Variable at 0x7f35280daa50>,
+ <tensorflow.python.ops.variables.Variable at 0x7f35280da910>,
+ <tf.Tensor 'add_4:0' shape=() dtype=int32>)
+```
+
+
+例子2 ：
+
+
+```python
+# 创建一个session，并且初始化再进行运算
+session = tf.Session()
+tf.initialize_all_variables().run(session=session)
+ 
+
+# 等同
+print addv.eval(session=session)
+print session.run(addv) 
+
+```
+
+结果
+```python
+15 15
+```
+
+
+所以tensorFlow是分两部分：1. 定义计算 2. 用Session计算
+
+
+
+### 4.2 定义多层神经网络
 
 在tensorflow中定义与计算神经网络的方法是：
 
@@ -316,20 +440,283 @@ relu定义小于0的数做0处理，大于0的数保持不变
 
 而POOLING过程是将图片维度降解，即我们提取了特征，再放大了特征之后我们再将特征提取到低维度
 
+网络定义完了，可以直接运算了
+
+```python 
+
+
+def get_chunk(samples, labels, chunkSize):
+	'''
+	Iterator/Generator: get a batch of data
+	这个函数是一个迭代器/生成器，用于每一次只得到 chunkSize 这么多的数据
+	用于 for loop， just like range() function
+	'''
+	
+	if len(samples) != len(labels):
+		raise Exception('Length of samples and labels must equal')
+	stepStart = 0	# initial step
+	i = 0
+	while stepStart < len(samples):
+		stepEnd = stepStart + chunkSize
+		if stepEnd < len(samples):
+			yield i, samples[stepStart:stepEnd], labels[stepStart:stepEnd]
+			i += 1
+		stepStart = stepEnd
+
+
+def run(self):
+	'''
+	用到Session
+	'''
+	# private function
+	def print_confusion_matrix(confusionMatrix):
+		print('Confusion    Matrix:')
+		for i, line in enumerate(confusionMatrix):
+			print(line, line[i]/np.sum(line))
+		a = 0
+		for i, column in enumerate(np.transpose(confusionMatrix, (1, 0))):
+			a += (column[i]/np.sum(column))*(np.sum(column)/26000)
+			print(column[i]/np.sum(column),)
+		print('\n',np.sum(confusionMatrix), a)
+
+
+	with self.session as session:
+		tf.initialize_all_variables().run()
+
+		### 训练
+		print('Start Training')
+		# batch 1000
+		for i, samples, labels in get_chunk(train_samples, train_labels,    chunkSize=self.batch_size):
+			_, l, predictions, summary = session.run(
+				[self.optimizer, self.loss, self.train_prediction, self.merged_train_summary],
+				feed_dict={self.tf_train_samples: samples, self.tf_train_labels: labels}
+			)
+			self.writer.add_summary(summary, i)
+			# labels is True Labels
+			accuracy, _ = self.accuracy(predictions, labels)
+			if i % 50 == 0:
+				print('Minibatch loss at step %d: %f' % (i, l))
+				print('Minibatch accuracy: %.1f%%' % accuracy)
+			
+			### 测试
+		accuracies = []
+		confusionMatrices = []
+		for i, samples, labels in get_chunk(test_samples, test_labels, chunkSize=self.test_batch_size):
+			result, summary = session.run(
+				[self.test_prediction, self.merged_test_summary],
+				feed_dict={self.tf_test_samples: samples}
+			)
+			# result = self.test_prediction.eval()
+			self.writer.add_summary(summary, i)
+			accuracy, cm = self.accuracy(result, labels, need_confusion_matrix=True)
+			accuracies.append(accuracy)
+			confusionMatrices.append(cm)
+			print('Test Accuracy: %.1f%%' % accuracy)
+		print(' Average  Accuracy:', np.average(accuracies))
+		print('Standard Deviation:', np.std(accuracies))
+		print_confusion_matrix(np.add.reduce(confusionMatrices))
+			###
+
+def accuracy(self, predictions, labels, need_confusion_matrix=False):
+		'''
+		计算预测的正确率与召回率
+		@return: accuracy and confusionMatrix as a tuple
+		'''
+		_predictions = np.argmax(predictions, 1)
+		_labels = np.argmax(labels, 1)
+		cm = confusion_matrix(_labels, _predictions) if need_confusion_matrix else None
+		# == is overloaded for numpy array
+		accuracy = (100.0 * np.sum(_predictions == _labels) / predictions.shape[0])
+		return accuracy, cm
+
+
+```
+
+
+但是这样直接定义的网络基本是没有什么准确率的。
+
+执行后发现准确率只有20%左右
+
+
+### 4.3 可视化TensorBoard
+
+
+它是一个web可视化的UI工具，主要用来分析在运算过程中定义的Graph文件。
+
+TensorBoard 涉及到的运算，通常是在训练庞大的深度神经网络中出现的复杂而又难以理解的运算。
+
+为了更方便 TensorFlow 程序的理解、调试与优化，我们发布了一套叫做 TensorBoard 的可视化工具。你可以用 TensorBoard 来展现你的 TensorFlow 图像，绘制图像生成的定量指标图以及附加数据。
+
+
+使用
+
+#### 4.3.1 运行
+
+
+在我们定义完Graph，并且Session让变量初始化后：
+
+```python
+self.session =  tf.Session(graph=self.graph)
+# tensorboard 可视化
+writer = tf.train.SummaryWriter('./board',self.graph)
+with self.session as session:
+     tf.initialize_all_variables().run()
+```
+
+运行后会发现在.board中多出一个event.out.xxx文件
+
+执行 tensorboard -logdir ./board
+
+这样Tensorboard的webui就运行起来了 127.0.0.1:6006
+
+
+#### 4.3.2 过程打包
+
+当我们进入web ui 会发现图形复杂且不能操作
+
+![432](http://7xkw0v.com1.z0.glb.clouddn.com/Image13.png)
+
+这时我们使用模组化编程，将我们的输入层、隐藏层和输出层全部打包起来
+
+```python
+def define_graph(self):
+    with self.graph.as_default():
+        # define some placeholder
+        with tf.name_scope('input'): # 这个是模组化打包的过程，为tensorboard可视化更方便
+            self.tf_train_samples = ...
+            self.tf_train_labels = ...
+            self.tf_test_samples = ...
+
+            # input层到hidden层的权重和偏置
+            with tf.name_scope('fc1'):
+                fc1_weights = ...
+                fc1_biases = ...
+
+            # 隐藏层到输出层的权重和偏置
+            with tf.name_scope('fc2'):
+                ...
+            
+            def model(data):
+                shape = data.get_shape().as_list()
+                reshape = tf.reshape(data, [shape[0], shape[1] * shape[2] * shape[3]])
+                with tf.name_scope('fc1_model'):
+                    hidden = ...
+                with tf.name_scope('fc2_model'):
+                    return tf.matmul(hidden, fc2_weights) + fc2_biases
+
+            logits = model(self.tf_train_samples)
+            with tf.name_scope('loss_model'):
+            self.loss = ...
+            with tf.name_scope('optimizer'):
+                self.optimizer = ...
+           
+            ....
+```
+
+
+可以看到加入了一些 with tf.name_scope('') , 并且一些变量附上了name的参数
+
+![213213](http://7xkw0v.com1.z0.glb.clouddn.com/Image21.png)
+![34](http://7xkw0v.com1.z0.glb.clouddn.com/Image22.png)
+
+
+其他的还有一些比如
+
+    writer.add_summary(summary,i)
+
+
+可以将变量变化统计
+
+![3213213](http://7xkw0v.com1.z0.glb.clouddn.com/Image23.png)
+
+### 4.4 调优
+
+前面提到，我们定义了多层神经网络，但是准确率依然很低，只有20%那么我们如何提升到90%呢？
+
+那么我们就得通过引入一些调优函数来做这件事了
+
+
+具体的调优函数已经在第二章介绍过了，下面只写出代码
+
+#### 4.4.1 正规化Regularization
+
+```python 
+
+def apply_regularization(self, _lambda):
+        # L2 regularization for the fully connected parameters
+        regularization = 0.0
+        for weights, biases in zip(self.fc_weights, self.fc_biases):
+            regularization += tf.nn.l2_loss(weights) + tf.nn.l2_loss(biases)
+        # 1e5
+        return _lambda * regularization
+
+     self.loss += self.apply_regularization(_lambda=5e-4)
+
+
+```
+
+在计算完loss插入
+
+#### 4.4.2 Dropout
+
+```python
+### Dropout
+    if train and i == len(self.fc_weights) - 1:
+        data_flow =  tf.nn.dropout(data_flow, 0.5, seed=4926)
+###
+
+```
+
+#### 4.4.3 Update Function 
+
+
+```python
+
+logits = model(self.tf_train_samples)
+with tf.name_scope('loss'):
+	self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits, self.tf_train_labels))
+	self.train_summaries.append(tf.scalar_summary('Loss', self.loss))
+
+with tf.name_scope('optimizer'):
+	self.optimizer = tf.train.GradientDescentOptimizer(0.0001).minimize(self.loss)
+```
+
+#### 4.4.4 学习效率衰减
+
+```python
+global_step = tf.Variable(0)
+lr = 0.001
+dr = 0.99
+learning_rate = tf.train.exponential_decay(
+    learning_rate=lr,
+    global_step=global_step*self.train_batch_size,
+    decay_steps=100,
+    decay_rate=1,
+    staircase=True
+)
+
+```
+
+
+## 5. 模型参数
+
+
+实际上有了上面4个优化函数就可以
+
+如果用默认值就可以达到70%左右的正确率
+
+最后我是设置了
+> * decay_rate = 0.9
+> * 迭代了3000次，每次100个
+> * lambda=5e-4
+
+
+可以达到90%左右的accuacy
+
+    Average  Accuracy: 89.35
+    Standard Deviation: 1.46491007863
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+**全文完**
 
