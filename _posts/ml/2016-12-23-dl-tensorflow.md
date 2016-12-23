@@ -706,6 +706,7 @@ learning_rate = tf.train.exponential_decay(
 如果用默认值就可以达到70%左右的正确率
 
 最后我是设置了
+
 > * decay_rate = 0.9
 > * 迭代了3000次，每次100个
 > * lambda=5e-4
