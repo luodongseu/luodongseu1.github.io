@@ -18,7 +18,7 @@ keywords: ml,dl,data
 
 相比起来，h2o的操作就太傻瓜式了，我想定义几层神经网络，直接整改个参数，reformat一个数据类型丢进去就好了。
 
-在此之前我有写了一些非DL(deep learning，下面都用DL代替)的印象笔记大约有17篇，其中主要讲了一些分类聚类等算法，可以给大家参考下。下载见附件
+在此之前我有写了一些非DL(deep learning，下面都用DL代替)的印象笔记大约有17篇，其中主要讲了一些分类聚类等算法，可以给大家参考下。下载见最后
 
 废话不多说，观看此片文章需要读者具有如下的知识积累：
 
@@ -720,4 +720,7 @@ learning_rate = tf.train.exponential_decay(
 
 
 **全文完**
+
+附件 ： [https://pan.baidu.com/s/1jIjYAsI](https://pan.baidu.com/s/1jIjYAsI)
+
 
